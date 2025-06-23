@@ -65,51 +65,67 @@ public class PathfindingManager {
             }
         }
 
-        // Check for tight corners
+        // Check for tight corners on 1-block diagonal moves
         int deltaX = Math.abs(src.getX() - dest.getX());
         int deltaZ = Math.abs(src.getZ() - dest.getZ());
-        // This check runs only for 1-block diagonal moves on the same Y-level
-        if (src.getY() == dest.getY() && deltaX == 1 && deltaZ == 1) {
+        if (!isJump && src.getY() == dest.getY() && deltaX == 1 && deltaZ == 1) {
             BlockState corner1 = bsi.get(src.getX() + (dest.getX() - src.getX()), src.getY(), src.getZ());
             BlockState corner2 = bsi.get(src.getX(), src.getY(), src.getZ() + (dest.getZ() - src.getZ()));
-            // If both corners are solid, you cannot cut through.
             if (!blockCache.canWalkThrough(0,0,0, corner1) && !blockCache.canWalkThrough(0,0,0, corner2)) {
                 return false;
             }
         }
 
-        // Check for obstructions during long, flat jumps
+        // Check for obstructions and runway space during long, flat jumps
         if (isJump && src.getY() == dest.getY() && src.getManhattanDistance(dest) > 1) {
-            // Bounding box of the jump path
-            int startX = Math.min(src.getX(), dest.getX());
-            int endX = Math.max(src.getX(), dest.getX());
-            int startZ = Math.min(src.getZ(), dest.getZ());
-            int endZ = Math.max(src.getZ(), dest.getZ());
+            // Check for a low ceiling at the starting point of a same-level jump
+            BlockState headBonkBlock = bsi.get(src.getX(), src.getY() + 2, src.getZ());
+            if (!blockCache.canWalkThrough(src.getX(), src.getY() + 2, src.getZ(), headBonkBlock)) {
+                return false; // Cannot jump if ceiling is too low at the start
+            }
 
-            // Iterate through the bounding box of blocks between the start and end points
-            for (int x = startX; x <= endX; x++) {
-                for (int z = startZ; z <= endZ; z++) {
-                    // Skip the very first block
-                    if (x == src.getX() && z == src.getZ()) {
-                        continue;
-                    }
+            // --- Runway Check ---
+            int jumpDistance = Math.max(deltaX, deltaZ);
+            if (jumpDistance >= 4) {
+                BlockPos jumpVector = dest.subtract(src);
+                BlockPos behind1 = src.subtract(new BlockPos(Integer.signum(jumpVector.getX()), 0, Integer.signum(jumpVector.getZ())));
+                BlockPos behind2 = behind1.subtract(new BlockPos(Integer.signum(jumpVector.getX()), 0, Integer.signum(jumpVector.getZ())));
+                if (!isValid(behind1) || !isValid(behind2)) {
+                    return false;
+                }
+            }
 
-                    // Check feet-level (Y+1) for obstructions
-                    BlockState feetLevelBlock = bsi.get(x, src.getY() + 1, z);
-                    if (!blockCache.canWalkThrough(x, src.getY() + 1, z, feetLevelBlock)) {
-                        return false; // Path is blocked
-                    }
+            // Use a line-drawing algorithm to check the actual path of the jump.
+            int steps = Math.max(deltaX, deltaZ);
+            if (steps == 0) return true; // Same block, no line to check.
 
-                    // Check head-level (Y+2) for obstructions
-                    BlockState headLevelBlock = bsi.get(x, src.getY() + 2, z);
-                    if (!blockCache.canWalkThrough(x, src.getY() + 2, z, headLevelBlock)) {
+            float xInc = (float) deltaX / (float) steps;
+            float zInc = (float) deltaZ / (float) steps;
+
+            // Ensure the sign is correct for negative directions
+            if (dest.getX() < src.getX()) xInc = -xInc;
+            if (dest.getZ() < src.getZ()) zInc = -zInc;
+
+            float currentX = src.getX();
+            float currentZ = src.getZ();
+
+            // Check each block along the line of the jump
+            for (int i = 0; i < steps; i++) {
+                currentX += xInc;
+                currentZ += zInc;
+                BlockPos currentBlock = new BlockPos(Math.round(currentX), src.getY(), Math.round(currentZ));
+
+                // Check for a 3-block-high clearance tunnel (feet, head, and jump arc)
+                for (int yOffset = 1; yOffset <= 3; yOffset++) {
+                    BlockPos checkPos = currentBlock.up(yOffset);
+                    BlockState state = bsi.get(checkPos.getX(), checkPos.getY(), checkPos.getZ());
+                    if (!blockCache.canWalkThrough(checkPos.getX(), checkPos.getY(), checkPos.getZ(), state)) {
                         return false; // Path is blocked
                     }
                 }
             }
         }
 
-        // If no obstructions are found, the path is clear.
         return true;
     }
 
@@ -235,7 +251,7 @@ public class PathfindingManager {
     /**
      * Find a path from the start position to the end position using A* algorithm
      */
-    public List<Node> findPath(BlockPos startPos, BlockPos endPos) {
+    public PathfindingResult findPath(BlockPos startPos, BlockPos endPos) {
         PriorityQueue<Node> openSet = new PriorityQueue<>(Comparator.comparing(Node::getF));
         Set<BlockPos> closedSet = new HashSet<>();
 
@@ -247,13 +263,14 @@ public class PathfindingManager {
         while (!openSet.isEmpty()) {
             if (System.currentTimeMillis() - startTime > Constants.PATHFINDING_TIMEOUT_MS) {
                 System.out.println("Pathfinding took too long, timed out!");
-                return null;
+                return new PathfindingResult(null, closedSet.size());
             }
 
             Node currentNode = openSet.poll();
 
             if (currentNode.getPos().isWithinDistance(endPos, 2.0)) {
-                return reconstructPath(currentNode);
+                List<Node> path = reconstructPath(currentNode);
+                return new PathfindingResult(path, closedSet.size());
             }
 
             closedSet.add(currentNode.getPos());
@@ -272,7 +289,7 @@ public class PathfindingManager {
                 }
             }
         }
-        return null; // No path found
+        return new PathfindingResult(null, closedSet.size()); // No path found
     }
 
     /**

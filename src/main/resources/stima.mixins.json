@@ -3,7 +3,7 @@
 	"package": "stimadpw.stima.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-      "GoTo"
+      "PathTo"
 	],
 	"injectors": {
 		"defaultRequire": 1

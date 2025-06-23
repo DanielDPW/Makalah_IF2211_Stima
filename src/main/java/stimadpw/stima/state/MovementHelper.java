@@ -1,6 +1,7 @@
 package stimadpw.stima.state;
 
 import net.minecraft.block.*;
+import net.minecraft.block.enums.SlabType;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.util.math.Direction;
 
@@ -11,6 +12,11 @@ public class MovementHelper {
      */
     public static boolean canWalkOn(BlockStateInterface bsi, int x, int y, int z, BlockState state) {
         Block block = state.getBlock();
+
+        if (block instanceof SlabBlock) {
+            // Slabs are walkable if they are bottom slabs or double slabs.
+            return state.get(SlabBlock.TYPE) != SlabType.TOP;
+        }
 
         if (state.getFluidState().isStill() && state.getFluidState().getFluid() == Fluids.WATER) {
             return bsi.get(x, y + 1, z).getFluidState().isEmpty();
