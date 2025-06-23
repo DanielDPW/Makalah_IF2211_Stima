@@ -245,7 +245,7 @@ public class PathfindingManager {
         long startTime = System.currentTimeMillis();
 
         while (!openSet.isEmpty()) {
-            if (System.currentTimeMillis() - startTime > Constants.TIMEOUT_MS) {
+            if (System.currentTimeMillis() - startTime > Constants.PATHFINDING_TIMEOUT_MS) {
                 System.out.println("Pathfinding took too long, timed out!");
                 return null;
             }

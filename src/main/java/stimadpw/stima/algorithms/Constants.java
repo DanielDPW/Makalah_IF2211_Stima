@@ -7,7 +7,10 @@ public final class Constants {
 
     private Constants() {}
 
-    public static final double TIMEOUT_MS = 150000;
+    // --- TIMING & DELAY CONSTANTS ---
+    public static final long PATHFINDING_TIMEOUT_MS = 150000L;
+    public static final long STUCK_THRESHOLD_MS = 250L;
+    public static final long SLOW_DURATION_MS = 100L;
 
     // --- MOVEMENT PHYSICS & THRESHOLDS ---
     public static final double DEFAULT_WALKING_FORCE = 0.3D;

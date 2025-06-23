@@ -39,7 +39,7 @@ public final class MovementUtils {
     /**
      * Checks if an entity's precise position is close enough to the center of a target block to be considered "arrived".
      */
-    public static boolean hasArrived(BlockPos targetBlock, Vec3d currentEntityPos) {
+    public static boolean hasArrived(Vec3d currentEntityPos, BlockPos targetBlock) {
         double distanceSquared = Math.pow(targetBlock.getX() + 0.5D - currentEntityPos.getX(), 2) + Math.pow(targetBlock.getZ() + 0.5D - currentEntityPos.getZ(), 2);
         return distanceSquared < 0.05;
     }
