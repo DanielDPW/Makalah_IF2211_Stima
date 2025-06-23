@@ -12,9 +12,6 @@ public final class MovementUtils {
 
     /**
      * Calculates the true 3D straight-line distance between two points.
-     * @param startPos The starting block position.
-     * @param endPos The ending block position.
-     * @return The direct-line distance in 3D space.
      */
     public static double getEuclideanDistance(BlockPos startPos, BlockPos endPos) {
         return Math.sqrt(startPos.getSquaredDistance(endPos));
@@ -22,12 +19,6 @@ public final class MovementUtils {
 
     /**
      * Calculates the cost of a single move from a parent node to a new position.
-     * This value is used to calculate the G-score of the new node.
-     * @param startNode The node we are moving from.
-     * @param destinationPos The block position we are moving to.
-     * @param isJump Is this move a jump?
-     * @param jumpStrength The force of the jump.
-     * @return The calculated cost for this single move.
      */
     public static double calculateMoveCost(Node startNode, BlockPos destinationPos, boolean isJump, double jumpStrength) {
         BlockPos startPos = startNode.getPos();
@@ -47,9 +38,6 @@ public final class MovementUtils {
 
     /**
      * Checks if an entity's precise position is close enough to the center of a target block to be considered "arrived".
-     * @param targetBlock The destination block.
-     * @param currentEntityPos The entity's exact Vec3d position.
-     * @return true if the entity has arrived at the target block.
      */
     public static boolean hasArrived(BlockPos targetBlock, Vec3d currentEntityPos) {
         double distanceSquared = Math.pow(targetBlock.getX() + 0.5D - currentEntityPos.getX(), 2) + Math.pow(targetBlock.getZ() + 0.5D - currentEntityPos.getZ(), 2);
@@ -58,8 +46,6 @@ public final class MovementUtils {
 
     /**
      * Checks if an entity is near the edge of a block, used to time jumps correctly.
-     * @param entityPos The entity's exact Vec3d position.
-     * @return true if the entity is near the edge of the block they are in.
      */
     public static boolean isOnEdge(Vec3d entityPos) {
         double xDecimal = Math.abs(entityPos.getX() % 1.0);

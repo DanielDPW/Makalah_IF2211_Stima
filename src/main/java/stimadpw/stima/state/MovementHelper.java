@@ -8,14 +8,6 @@ public class MovementHelper {
 
     /**
      * Checks if the player can stand on top of a block at a specific position.
-     * This combines logic for simple solids, complex blocks like water, and non-full blocks like fences.
-     *
-     * @param bsi   The BlockStateInterface for world access.
-     * @param x     The X coordinate of the block.
-     * @param y     The Y coordinate of the block.
-     * @param z     The Z coordinate of the block.
-     * @param state The BlockState of the block being checked.
-     * @return true if the player can walk on this block.
      */
     public static boolean canWalkOn(BlockStateInterface bsi, int x, int y, int z, BlockState state) {
         Block block = state.getBlock();
@@ -33,13 +25,6 @@ public class MovementHelper {
 
     /**
      * Checks if the player can move through the space occupied by a block.
-     *
-     * @param bsi   The BlockStateInterface for world access.
-     * @param x     The X coordinate of the block.
-     * @param y     The Y coordinate of the block.
-     * @param z     The Z coordinate of the block.
-     * @param state The BlockState of the block being checked.
-     * @return true if the player can pass through this block.
      */
     public static boolean canWalkThrough(BlockStateInterface bsi, int x, int y, int z, BlockState state) {
         return state.getCollisionShape(bsi.getWorld(), bsi.mutable.set(x, y, z)).isEmpty()
@@ -49,8 +34,6 @@ public class MovementHelper {
 
     /**
      * Checks if a block is dangerous to stand on.
-     * @param state The BlockState of the block being checked.
-     * @return true if the block is dangerous.
      */
     public static boolean isDangerous(BlockState state) {
         Block block = state.getBlock();
