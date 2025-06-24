@@ -34,6 +34,10 @@ public class MovementHelper {
      * Checks if the player can move through the space occupied by a block.
      */
     public static boolean canWalkThrough(BlockStateInterface bsi, int x, int y, int z, BlockState state) {
+        Block block = state.getBlock();
+        if (block instanceof DoorBlock || block instanceof FenceGateBlock) {
+            return true;
+        }
         return state.getCollisionShape(bsi.getWorld(), bsi.mutable.set(x, y, z)).isEmpty()
                 || state.isReplaceable()
                 || !state.getFluidState().isEmpty();
