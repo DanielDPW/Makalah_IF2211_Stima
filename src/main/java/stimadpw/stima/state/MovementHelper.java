@@ -3,6 +3,7 @@ package stimadpw.stima.state;
 import net.minecraft.block.*;
 import net.minecraft.block.enums.SlabType;
 import net.minecraft.fluid.Fluids;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.Direction;
 
 public class MovementHelper {
@@ -18,7 +19,7 @@ public class MovementHelper {
             return state.get(SlabBlock.TYPE) != SlabType.TOP;
         }
 
-        if (state.getFluidState().isStill() && state.getFluidState().getFluid() == Fluids.WATER) {
+        if (state.getFluidState().isIn(FluidTags.WATER)) {
             return bsi.get(x, y + 1, z).getFluidState().isEmpty();
         }
 
@@ -43,7 +44,11 @@ public class MovementHelper {
      */
     public static boolean isDangerous(BlockState state) {
         Block block = state.getBlock();
-        if (!state.getFluidState().isEmpty() && state.getFluidState().getFluid() == Fluids.LAVA) {
+        if (state.getFluidState().isIn(FluidTags.LAVA)) {
+            return true;
+        }
+
+        if (block instanceof CampfireBlock && state.get(CampfireBlock.LIT)) {
             return true;
         }
 

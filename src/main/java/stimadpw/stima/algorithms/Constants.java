@@ -7,6 +7,8 @@ public final class Constants {
 
     private Constants() {}
 
+    public static final int MAX_FALL_DISTANCE = 4;
+
     // --- TIMING & DELAY CONSTANTS ---
     public static final long PATHFINDING_TIMEOUT_MS = 150000L;
 

@@ -153,10 +153,7 @@ public class PathfindingManager {
         addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, -1), true, Constants.FORCE_SHORT_JUMP_B);
 
         // Falling moves
-        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, -1, 0), false, Constants.FORCE_FALLING_MOVE);
-        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, -1, 0), false, Constants.FORCE_FALLING_MOVE);
-        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, -1, 1), false, Constants.FORCE_FALLING_MOVE);
-        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, -1, -1), false, Constants.FORCE_FALLING_MOVE);
+        addFallingNeighbors(neighbors, currentNode, goal);
 
         // Sprint-jump moves
         // Long-jump
@@ -246,6 +243,54 @@ public class PathfindingManager {
         addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 0, -2), true, Constants.FORCE_SHORT_JUMP_B);
 
         return neighbors;
+    }
+
+    /**
+     * Scans for and adds valid neighbors that are reachable by falling.
+     */
+    private void addFallingNeighbors(List<Node> neighbors, Node parent, BlockPos goal) {
+        // Check for potential drop-down positions around the current node
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) {
+                    continue;
+                }
+
+                BlockPos horizontalNeighbor = parent.getPos().add(dx, 0, dz);
+
+                // Check if the adjacent block is air, otherwise we can't move there to fall.
+                if (!blockCache.canWalkThrough(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 1, horizontalNeighbor.getZ(), bsi.get(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 1, horizontalNeighbor.getZ())) ||
+                        !blockCache.canWalkThrough(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 2, horizontalNeighbor.getZ(), bsi.get(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 2, horizontalNeighbor.getZ()))
+                ) {
+                    continue;
+                }
+
+                // Scan downwards from this horizontal position to find a landing spot
+                for (int drop = 1; drop <= Constants.MAX_FALL_DISTANCE; drop++) {
+                    BlockPos landingPos = horizontalNeighbor.down(drop);
+
+                    if (isValid(landingPos)) {
+                        boolean pathClear = true;
+                        for (int y = 0; y < drop; y++) {
+                            BlockPos fallPathPos = horizontalNeighbor.down(y);
+                            // Check player's head and feet space during the fall
+                            if (!blockCache.canWalkThrough(fallPathPos.getX(), fallPathPos.getY() + 1, fallPathPos.getZ(), bsi.get(fallPathPos.getX(), fallPathPos.getY() + 1, fallPathPos.getZ()))) {
+                                pathClear = false;
+                                break;
+                            }
+                        }
+
+                        if (pathClear) {
+                            double g = parent.getG() + MovementUtils.calculateMoveCost(parent, landingPos, false, Constants.FORCE_FALLING_MOVE);
+                            double h = MovementUtils.getEuclideanDistance(landingPos, goal);
+                            neighbors.add(new Node(landingPos, parent, g, h, false, 0));
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     /**
