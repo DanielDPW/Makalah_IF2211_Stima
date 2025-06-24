@@ -306,46 +306,63 @@ public class PathfindingManager {
     }
 
     /**
+     * Checks if the 3D path between two points is clear for a 2-block-high player.
+     * This uses a simple line interpolation to check intermediate blocks.
+     */
+    private boolean isPathClear3D(BlockPos src, BlockPos dest) {
+        int deltaX = dest.getX() - src.getX();
+        int deltaY = dest.getY() - src.getY();
+        int deltaZ = dest.getZ() - src.getZ();
+
+        int steps = (int) Math.ceil(Math.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ));
+        if (steps == 0) return true;
+
+        for (int i = 1; i < steps; i++) {
+            double t = (double) i / steps;
+            int x = src.getX() + (int) (t * deltaX);
+            int y = src.getY() + (int) (t * deltaY);
+            int z = src.getZ() + (int) (t * deltaZ);
+
+            BlockPos currentPathPos = new BlockPos(x, y, z);
+
+            // Check the 2-block high player space at this intermediate point
+            BlockState feetCheck = bsi.get(currentPathPos.getX(), currentPathPos.getY() + 1, currentPathPos.getZ());
+            BlockState headCheck = bsi.get(currentPathPos.getX(), currentPathPos.getY() + 2, currentPathPos.getZ());
+
+            if (!blockCache.canWalkThrough(currentPathPos.getX(), currentPathPos.getY() + 1, currentPathPos.getZ(), feetCheck) ||
+                    !blockCache.canWalkThrough(currentPathPos.getX(), currentPathPos.getY() + 2, currentPathPos.getZ(), headCheck)) {
+                return false; // Path is blocked
+            }
+        }
+        return true; // Path is clear
+    }
+
+    /**
      * Scans for and adds valid neighbors that are reachable by falling.
      */
     private void addFallingNeighbors(List<Node> neighbors, Node parent, BlockPos goal) {
         // Check for potential drop-down positions around the current node
-        for (int dx = -3; dx <= 3; dx++) {
-            for (int dz = -3; dz <= 3; dz++) {
-                if (dx == 0 && dz == 0) {
-                    continue;
-                }
+        for (int dx = -1; dx <= 1; dx++) {
+            for (int dz = -1; dz <= 1; dz++) {
+                if (dx == 0 && dz == 0) continue;
 
-                BlockPos horizontalNeighbor = parent.getPos().add(dx, 0, dz);
+                BlockPos fallStartPos = parent.getPos().add(dx, 0, dz);
 
-                // Check if the adjacent block is air, otherwise we can't move there to fall.
-                if (!blockCache.canWalkThrough(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 1, horizontalNeighbor.getZ(), bsi.get(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 1, horizontalNeighbor.getZ())) ||
-                        !blockCache.canWalkThrough(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 2, horizontalNeighbor.getZ(), bsi.get(horizontalNeighbor.getX(), horizontalNeighbor.getY() + 2, horizontalNeighbor.getZ()))
-                ) {
-                    continue;
-                }
-
-                // Scan downwards from this horizontal position to find a landing spot
+                // Scan downwards from this edge position to find the first valid landing spot
                 for (int drop = 1; drop <= Constants.MAX_FALL_DISTANCE; drop++) {
-                    BlockPos landingPos = horizontalNeighbor.down(drop);
+                    BlockPos landingPos = fallStartPos.down(drop);
 
+                    // First, check if the destination itself is a valid place to stand.
                     if (isValid(landingPos)) {
-                        boolean pathClear = true;
-                        for (int y = 0; y < drop; y++) {
-                            BlockPos fallPathPos = horizontalNeighbor.down(y);
-                            // Check player's head and feet space during the fall
-                            if (!blockCache.canWalkThrough(fallPathPos.getX(), fallPathPos.getY() + 1, fallPathPos.getZ(), bsi.get(fallPathPos.getX(), fallPathPos.getY() + 1, fallPathPos.getZ()))) {
-                                pathClear = false;
-                                break;
-                            }
-                        }
-
-                        if (pathClear) {
+                        // Now, check the entire 3D path from the parent to the landing spot.
+                        if (isPathClear3D(parent.getPos(), landingPos)) {
                             double g = parent.getG() + MovementUtils.calculateMoveCost(parent, landingPos, false, Constants.FORCE_FALLING_MOVE);
                             double h = MovementUtils.getEuclideanDistance(landingPos, goal);
                             neighbors.add(new Node(landingPos, parent, g, h, false, 0));
                         }
 
+                        // Whether the path was clear or not, we found the first solid ground
+                        // in this column, so we should stop scanning downwards.
                         break;
                     }
                 }

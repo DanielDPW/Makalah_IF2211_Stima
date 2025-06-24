@@ -10,7 +10,7 @@ public final class Constants {
     public static final int MAX_FALL_DISTANCE = 4;
 
     // --- TIMING & DELAY CONSTANTS ---
-    public static final long PATHFINDING_TIMEOUT_MS = 150000L;
+    public static final long PATHFINDING_TIMEOUT_MS = 600000L;
 
     // --- MOVEMENT PHYSICS & THRESHOLDS ---
     public static final double DEFAULT_WALKING_FORCE = 0.3D;
