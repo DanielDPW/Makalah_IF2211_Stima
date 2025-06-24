@@ -32,7 +32,58 @@ This project explores the application of the A* search algorithm, to solve compl
 
 ## Project Structure
 ```ssh
-
+.
+├── LICENSE
+├── README.md
+├── build.gradle
+├── docs
+│   └── Optimizing Minecraft Speedruns with Pathfinding Algorithm_A Heuristic Approach to Route Planning.pdf
+├── gradle
+│   └── wrapper
+│       ├── gradle-wrapper.jar
+│       └── gradle-wrapper.properties
+├── gradle.properties
+├── gradlew
+├── gradlew.bat
+├── settings.gradle
+└── src
+    ├── client
+    │   ├── java
+    │   │   └── stimadpw
+    │   │       └── stima
+    │   │           ├── StimaClient.java
+    │   │           └── mixin
+    │   │               └── client
+    │   │                   └── ExampleClientMixin.java
+    │   └── resources
+    │       └── stima.client.mixins.json
+    └── main
+        ├── java
+        │   └── stimadpw
+        │       └── stima
+        │           ├── Stima.java
+        │           ├── algorithms
+        │           │   ├── Constants.java
+        │           │   ├── IPathfindingController.java
+        │           │   ├── MovementUtils.java
+        │           │   ├── PathVisualizer.java
+        │           │   ├── PathfindingManager.java
+        │           │   └── PathfindingResult.java
+        │           ├── commands
+        │           │   └── ModCommands.java
+        │           ├── mixin
+        │           │   └── PathTo.java
+        │           └── state
+        │               ├── BlockCache.java
+        │               ├── BlockStateInterface.java
+        │               ├── MovementHelper.java
+        │               └── Node.java
+        └── resources
+            ├── assets
+            │   └── stima
+            │       └── icon.png
+            ├── fabric.mod.json
+            └── stima.mixins.json
 ```
 
 ## How To Use
