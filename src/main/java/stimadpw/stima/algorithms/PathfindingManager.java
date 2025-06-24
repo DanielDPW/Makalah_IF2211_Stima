@@ -147,10 +147,70 @@ public class PathfindingManager {
         addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 0, -1), false, Constants.DEFAULT_WALKING_FORCE);
 
         // Jump-up moves
+        // Short Jumps
         addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, 0), true, Constants.FORCE_SHORT_JUMP_B);
         addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, 0), true, Constants.FORCE_SHORT_JUMP_B);
         addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, 1), true, Constants.FORCE_SHORT_JUMP_B);
         addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, -1), true, Constants.FORCE_SHORT_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, 1), true, Constants.FORCE_SHORT_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, -1), true, Constants.FORCE_SHORT_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, 1), true, Constants.FORCE_SHORT_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, -1), true, Constants.FORCE_SHORT_JUMP_B);
+
+        // Short-Medium Jumps
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, 0), true, Constants.FORCE_SHORT_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, 0), true, Constants.FORCE_SHORT_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, 2), true, Constants.FORCE_SHORT_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, -2), true, Constants.FORCE_SHORT_JUMP_A);
+
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, 1), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, -1), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, 1), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, -1), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, 2), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, -2), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, 2), true, Constants.FORCE_MEDIUM_JUMP_C);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, -2), true, Constants.FORCE_MEDIUM_JUMP_C);
+
+        // Medium Jumps
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, 2), true, Constants.FORCE_MEDIUM_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, -2), true, Constants.FORCE_MEDIUM_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, 2), true, Constants.FORCE_MEDIUM_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, -2), true, Constants.FORCE_MEDIUM_JUMP_B);
+
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(3, 1, 0), true, Constants.FORCE_MEDIUM_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-3, 1, 0), true, Constants.FORCE_MEDIUM_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, 3), true, Constants.FORCE_MEDIUM_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(0, 1, -3), true, Constants.FORCE_MEDIUM_JUMP_A);
+
+        // Long Jumps
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(3, 1, 1), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(3, 1, -1), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-3, 1, 1), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-3, 1, -1), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, 3), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(1, 1, -3), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, 3), true, Constants.FORCE_LONG_JUMP_B);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-1, 1, -3), true, Constants.FORCE_LONG_JUMP_B);
+
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(3, 1, 2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(3, 1, -2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-3, 1, 2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-3, 1, -2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, 3), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, -3), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, 3), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, -3), true, Constants.FORCE_LONG_JUMP_A);
+
+        // Very Long Jump-Up
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(4, 1, 2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(4, 1, -2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-4, 1, 2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-4, 1, -2), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, 4), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(2, 1, -4), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, 4), true, Constants.FORCE_LONG_JUMP_A);
+        addNeighbor(neighbors, currentNode, goal, new BlockPos(-2, 1, -4), true, Constants.FORCE_LONG_JUMP_A);
 
         // Falling moves
         addFallingNeighbors(neighbors, currentNode, goal);
