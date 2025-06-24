@@ -250,8 +250,8 @@ public class PathfindingManager {
      */
     private void addFallingNeighbors(List<Node> neighbors, Node parent, BlockPos goal) {
         // Check for potential drop-down positions around the current node
-        for (int dx = -1; dx <= 1; dx++) {
-            for (int dz = -1; dz <= 1; dz++) {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
                 if (dx == 0 && dz == 0) {
                     continue;
                 }
