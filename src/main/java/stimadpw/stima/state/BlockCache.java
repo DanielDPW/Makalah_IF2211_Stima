@@ -4,8 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 
 public class BlockCache {
-
-    private final int[] data = new int[Block.STATE_IDS.size()];
     private final BlockStateInterface bsi;
 
     public BlockCache(BlockStateInterface bsi) {
